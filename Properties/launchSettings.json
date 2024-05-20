@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "adhelpers": {
+      "commandName": "Project"
+    },
+    "adhelpersLauncher": {
+      "commandName": "Executable",
+      "executablePath": "pwsh.exe",
+      "commandLineArgs": "-NoExit\r\n-Command \"import-module .\\$(AssemblyName).dll\""
+    }
+  }
+}
