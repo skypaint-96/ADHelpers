@@ -59,9 +59,13 @@
 
         private void GetLockoutData(DirectorySearcher searcher)
         {
+            WriteDebug("1");
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
+            WriteDebug("2");
             SearchResult sr = searcher.FindOne();
+            WriteDebug("3");
             DirectoryEntry directoryEntry = sr.GetDirectoryEntry();
+            WriteDebug("4");
             LockoutSet lockoutSet = new LockoutSet(searcher.SearchRoot.Name,
                 (string)directoryEntry.Properties["userPrincipalName"].Value,
                 (int)directoryEntry.Properties["badLogonCount"].Value,
