@@ -26,7 +26,7 @@
             foreach (DomainController dc in domain.FindAllDiscoverableDomainControllers())
             {
                 DirectorySearcher searcher = dc.GetDirectorySearcher();
-                searcher.Filter = $"(cn={Identity}";
+                searcher.Filter = $"(cn={Identity})";
                 SearchResult sr = searcher.FindOne();
                 sr.GetDirectoryEntry();
             
