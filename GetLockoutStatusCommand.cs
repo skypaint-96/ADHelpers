@@ -5,8 +5,7 @@
     using System.Management.Automation;
     using System.Management.Automation.Runspaces;
     using System.DirectoryServices;
-
-
+    using System.DirectoryServices.ActiveDirectory;
 
     [Cmdlet(VerbsCommon.Get, "LockoutStatus")]
     [OutputType(typeof(IEnumerable<LockoutSet>))]
@@ -22,9 +21,18 @@
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
-            DirectorySearcher searcher = new DirectorySearcher();
-            searcher.Filter = $"(name = \"{Identity}\"";
-            WriteObject(searcher.FindOne());
+            //DirectorySearcher searcher = new DirectorySearcher();
+            Domain domain = Domain.GetCurrentDomain();
+            foreach (DomainController dc in domain.FindAllDiscoverableDomainControllers())
+            {
+                DirectorySearcher searcher = dc.GetDirectorySearcher();
+                searcher.Filter = $"(cn={Identity}";
+                SearchResult sr = searcher.FindOne();
+                sr.GetDirectoryEntry();
+            
+            }
+            
+            
         }
 
     }
