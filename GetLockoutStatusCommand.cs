@@ -76,9 +76,7 @@
             WriteDebug("2");
             SearchResult sr = searcher.FindOne();
             WriteDebug("3");
-            DirectoryEntry directoryEntry = sr.GetDirectoryEntry();
-            WriteDebug("4");
-            WriteObject(directoryEntry);
+            WriteObject(sr.Properties);
             //LockoutSet lockoutSet = new LockoutSet("", user.UserPrincipalName, user.BadLogonCount, user.LastBadPasswordAttempt, user.LastLogon, user.Enabled, user.IsAccountLockedOut(), user.AccountLockoutTime, (DirectoryEntry)user.GetUnderlyingObject().);
             //WriteObject(lockoutSet);
 
