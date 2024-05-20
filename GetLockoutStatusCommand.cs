@@ -64,7 +64,7 @@
             DateTime epoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             searcher.PropertiesToLoad.Clear();
             searcher.PropertiesToLoad.Add("samaccountname");
-            searcher.PropertiesToLoad.Add("badPwdCound");
+            searcher.PropertiesToLoad.Add("badPwdCount");
             searcher.PropertiesToLoad.Add("badpasswordtime");
             searcher.PropertiesToLoad.Add("lastLogon");
             searcher.PropertiesToLoad.Add("useraccountcontrol");
@@ -76,7 +76,7 @@
             WriteObject(sr.Properties);
 
             WriteObject((string)sr.Properties["samaccountname"][0]);
-            WriteObject((int)sr.Properties["badPwdCound"][0]);
+            WriteObject((int)sr.Properties["badPwdCount"][0]);
             WriteObject(epoc.AddMilliseconds((long)sr.Properties["badpasswordtime"][0] * 0.0001));
             WriteObject(epoc.AddMilliseconds((long)sr.Properties["lastLogon"][0] * 0.0001));
             WriteObject(((int)sr.Properties["useraccountcontrol"][0] & 0x2) == 0x2);
