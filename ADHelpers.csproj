@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>ADHelpers</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="TestSampleCmdletCommand.cs.test" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="TestSampleCmdletCommand.cs.test" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>
