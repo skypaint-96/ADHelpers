@@ -62,13 +62,12 @@
         {
             //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), Identity);
             DateTime epoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            
             searcher.PropertiesToLoad.Clear();
             searcher.PropertiesToLoad.Add("samaccountnamename");
             searcher.PropertiesToLoad.Add("badPwdCound");
             searcher.PropertiesToLoad.Add("badpasswordtime");
             searcher.PropertiesToLoad.Add("lastLogon");
-            searcher.PropertiesToLoad.Add("enabled");
+            searcher.PropertiesToLoad.Add("useraccountcontrol");
             searcher.PropertiesToLoad.Add("lockouttime");
             searcher.PropertiesToLoad.Add("msDS-UserPasswordExpiryTimeComputed");
             searcher.PropertiesToLoad.Add("pwdlastset");
@@ -80,7 +79,7 @@
                 (int)sr.Properties["badPwdCound"][0],
                 epoc.AddMilliseconds((long)sr.Properties["badpasswordtime"][0] * 0.0001),
                 epoc.AddMilliseconds((long)sr.Properties["lastLogon"][0] * 0.0001),
-                (bool)sr.Properties["enabled"][0],
+                ((int)sr.Properties["useraccountcontrol"][0] & 0x2 ) == 0x2,
                 epoc.AddMilliseconds((long)sr.Properties["lockouttime"][0] * 0.0001),
                 epoc.AddMilliseconds((long)sr.Properties["msDS-UserPasswordExpiryTimeComputed"][0] * 0.0001),
                 epoc.AddMilliseconds((long)sr.Properties["pwdlastset"][0] * 0.0001)));
