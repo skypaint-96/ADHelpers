@@ -61,21 +61,30 @@
         private void GetLockoutData(DirectorySearcher searcher)
         {
             //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), Identity);
-
-            WriteDebug("1");
+            DateTime epoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            
             searcher.PropertiesToLoad.Clear();
-            searcher.PropertiesToLoad.Add("userprincipalname");
+            searcher.PropertiesToLoad.Add("samaccountnamename");
             searcher.PropertiesToLoad.Add("badPwdCound");
             searcher.PropertiesToLoad.Add("badpasswordtime");
             searcher.PropertiesToLoad.Add("lastLogon");
             searcher.PropertiesToLoad.Add("enabled");
             searcher.PropertiesToLoad.Add("lockouttime");
             searcher.PropertiesToLoad.Add("msDS-UserPasswordExpiryTimeComputed");
-            searcher.PropertiesToLoad.Add("pwdlastpassword");
+            searcher.PropertiesToLoad.Add("pwdlastset");
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
-            WriteDebug("2");
             SearchResult sr = searcher.FindOne();
-            WriteDebug("3");
+            WriteObject(sr.Properties);
+            WriteObject(new LockoutSet(searcher.SearchRoot.Name,
+                (string)sr.Properties["samaccountname"][0],
+                (int)sr.Properties["badPwdCound"][0],
+                epoc.AddMilliseconds((long)sr.Properties["badpasswordtime"][0] * 0.0001),
+                epoc.AddMilliseconds((long)sr.Properties["lastLogon"][0] * 0.0001),
+                (bool)sr.Properties["enabled"][0],
+                epoc.AddMilliseconds((long)sr.Properties["lockouttime"][0] * 0.0001),
+                epoc.AddMilliseconds((long)sr.Properties["msDS-UserPasswordExpiryTimeComputed"][0] * 0.0001),
+                epoc.AddMilliseconds((long)sr.Properties["pwdlastset"][0] * 0.0001)));
+
             WriteObject(sr.Properties);
             //LockoutSet lockoutSet = new LockoutSet("", user.UserPrincipalName, user.BadLogonCount, user.LastBadPasswordAttempt, user.LastLogon, user.Enabled, user.IsAccountLockedOut(), user.AccountLockoutTime, (DirectoryEntry)user.GetUnderlyingObject().);
             //WriteObject(lockoutSet);
@@ -85,18 +94,15 @@
 
     public class LockoutSet
     {
-        public LockoutSet(string server, string userPrincipalName, int badLogonCount, int badPwdCound, DateTime lastBadPasswordAttempt, DateTime lastLogonDate, bool enabled, bool lockedOut, DateTime lockoutTime, bool passwordExpired, DateTime passwordLastSet)
+        public LockoutSet(string server, string userPrincipalName, int badPwdCound, DateTime lastBadPasswordAttempt, DateTime lastLogonDate, bool enabled, DateTime lockoutTime, DateTime passwordExpires, DateTime passwordLastSet)
         {
             Server = server;
             UserPrincipalName = userPrincipalName;
-            BadLogonCount = badLogonCount;
             BadPwdCound = badPwdCound;
             LastBadPasswordAttempt = lastBadPasswordAttempt;
             LastLogonDate = lastLogonDate;
             Enabled = enabled;
-            LockedOut = lockedOut;
             LockoutTime = lockoutTime;
-            PasswordExpired = passwordExpired;
             PasswordLastSet = passwordLastSet;
         }
 
