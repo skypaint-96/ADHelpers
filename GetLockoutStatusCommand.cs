@@ -63,7 +63,7 @@
             //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), Identity);
             DateTime epoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             searcher.PropertiesToLoad.Clear();
-            searcher.PropertiesToLoad.Add("samaccountnamename");
+            searcher.PropertiesToLoad.Add("samaccountname");
             searcher.PropertiesToLoad.Add("badPwdCound");
             searcher.PropertiesToLoad.Add("badpasswordtime");
             searcher.PropertiesToLoad.Add("lastLogon");
@@ -74,17 +74,17 @@
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
             SearchResult sr = searcher.FindOne();
             WriteObject(sr.Properties);
-            WriteObject(new LockoutSet(searcher.SearchRoot.Name,
-                (string)sr.Properties["samaccountname"][0],
-                (int)sr.Properties["badPwdCound"][0],
-                epoc.AddMilliseconds((long)sr.Properties["badpasswordtime"][0] * 0.0001),
-                epoc.AddMilliseconds((long)sr.Properties["lastLogon"][0] * 0.0001),
-                ((int)sr.Properties["useraccountcontrol"][0] & 0x2 ) == 0x2,
-                epoc.AddMilliseconds((long)sr.Properties["lockouttime"][0] * 0.0001),
-                epoc.AddMilliseconds((long)sr.Properties["msDS-UserPasswordExpiryTimeComputed"][0] * 0.0001),
-                epoc.AddMilliseconds((long)sr.Properties["pwdlastset"][0] * 0.0001)));
 
-            WriteObject(sr.Properties);
+            WriteObject((string)sr.Properties["samaccountname"][0]);
+            WriteObject((int)sr.Properties["badPwdCound"][0]);
+            WriteObject(epoc.AddMilliseconds((long)sr.Properties["badpasswordtime"][0] * 0.0001));
+            WriteObject(epoc.AddMilliseconds((long)sr.Properties["lastLogon"][0] * 0.0001));
+            WriteObject(((int)sr.Properties["useraccountcontrol"][0] & 0x2) == 0x2);
+            WriteObject(epoc.AddMilliseconds((long)sr.Properties["lockouttime"][0] * 0.0001));
+            WriteObject(epoc.AddMilliseconds((long)sr.Properties["msDS-UserPasswordExpiryTimeComputed"][0] * 0.0001));
+            WriteObject(epoc.AddMilliseconds((long)sr.Properties["pwdlastset"][0] * 0.0001));
+
+            //WriteObject(sr.Properties);
             //LockoutSet lockoutSet = new LockoutSet("", user.UserPrincipalName, user.BadLogonCount, user.LastBadPasswordAttempt, user.LastLogon, user.Enabled, user.IsAccountLockedOut(), user.AccountLockoutTime, (DirectoryEntry)user.GetUnderlyingObject().);
             //WriteObject(lockoutSet);
 
