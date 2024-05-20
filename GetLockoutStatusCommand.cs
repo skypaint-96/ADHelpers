@@ -59,7 +59,7 @@
 
         private void GetLockoutData(DirectorySearcher searcher)
         {
-            searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity})";
+            searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
             SearchResult sr = searcher.FindOne();
             DirectoryEntry directoryEntry = sr.GetDirectoryEntry();
             LockoutSet lockoutSet = new LockoutSet(searcher.SearchRoot.Name,
