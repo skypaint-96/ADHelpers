@@ -66,18 +66,19 @@
             WriteDebug("3");
             DirectoryEntry directoryEntry = sr.GetDirectoryEntry();
             WriteDebug("4");
-            LockoutSet lockoutSet = new LockoutSet(searcher.SearchRoot.Name,
-                (string)directoryEntry.Properties["userPrincipalName"].Value,
-                (int)directoryEntry.Properties["badLogonCount"].Value,
-                (int)directoryEntry.Properties["badPwdCound"].Value,
-                (DateTime)directoryEntry.Properties["lastBadPasswordAttempt"].Value,
-                (DateTime)directoryEntry.Properties["lastLogonDate"].Value,
-                (bool)directoryEntry.Properties["enabled"].Value,
-                (bool)directoryEntry.Properties["lockedOut"].Value,
-                (DateTime)directoryEntry.Properties["lockoutTime"].Value,
-                (bool)directoryEntry.Properties["passwordExpired"].Value,
-                (DateTime)directoryEntry.Properties["passwordLastSet"].Value);
-            WriteObject(lockoutSet);
+            WriteObject(directoryEntry);
+            //LockoutSet lockoutSet = new LockoutSet(searcher.SearchRoot.Name,
+            //    (string)directoryEntry.Properties["userPrincipalName"].Value,
+            //    (int)directoryEntry.Properties["badLogonCount"].Value,
+            //    (int)directoryEntry.Properties["badPwdCound"].Value,
+            //    (DateTime)directoryEntry.Properties["lastBadPasswordAttempt"].Value,
+            //    (DateTime)directoryEntry.Properties["lastLogonDate"].Value,
+            //    (bool)directoryEntry.Properties["enabled"].Value,
+            //    (bool)directoryEntry.Properties["lockedOut"].Value,
+            //    (DateTime)directoryEntry.Properties["lockoutTime"].Value,
+            //    (bool)directoryEntry.Properties["passwordExpired"].Value,
+            //    (DateTime)directoryEntry.Properties["passwordLastSet"].Value);
+            //WriteObject(lockoutSet);
 
         }
     }
