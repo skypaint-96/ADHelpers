@@ -24,7 +24,7 @@
         {
             DirectorySearcher searcher = new DirectorySearcher();
             searcher.Filter = $"(name = \"{Identity}\"";
-            searcher.FindOne
+            WriteObject(searcher.FindOne());
         }
 
     }
