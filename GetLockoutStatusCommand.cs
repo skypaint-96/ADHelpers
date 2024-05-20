@@ -23,45 +23,58 @@
         [Parameter(
             Mandatory = false,
             Position = 1,
-            ValueFromPipeline = true,
-            ValueFromPipelineByPropertyName = true)]
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = false)]
         public SearchType SearchProperty { get; set; } = SearchType.SamAccountName;
 
-        [Parameter(
-            Mandatory = false,
-            Position = 2,
-            ValueFromPipeline = true,
-            ValueFromPipelineByPropertyName = true)]
-        public bool AllServers { get; set; } = false;
+        //[Parameter(
+        //    Mandatory = false,
+        //    Position = 2,
+        //    ValueFromPipeline = true,
+        //    ValueFromPipelineByPropertyName = true)]
+        //public bool AllServers { get; set; } = false;
 
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
-            if (AllServers)
-            {
-                GetLockoutDataForAllServers();
-            }
-            else
-            {
-                GetLockoutData(new DirectorySearcher());
-            }
+            //Stack<LockoutSet> output = new Stack<LockoutSet>();
+            //if (AllServers)
+            //{
+            //    output = new Stack<LockoutSet>(GetLockoutDataForAllServers());
+            //}
+            //else
+            //{
+                //output.Push(
+                WriteObject(GetLockoutData(new DirectorySearcher()));
+                //);
+            //}
+            //foreach (LockoutSet lockoutSet in output)
+            //{
+                //WriteObject(lockoutSet);
+            //}
 
         }
 
-        private void GetLockoutDataForAllServers()
+        private Stack<LockoutSet> GetLockoutDataForAllServers()
         {
+            throw new NotImplementedException();
             Domain domain = Domain.GetCurrentDomain();
+            Stack<LockoutSet> output = new Stack<LockoutSet>();
             Parallel.ForEach((IEnumerable<DomainController>)domain.FindAllDiscoverableDomainControllers(), (DomainController dc) => {
                 DirectorySearcher searcher = dc.GetDirectorySearcher();
-                GetLockoutData(searcher);
+                output.Push(GetLockoutData(searcher));
             });
+            return output;
 
         }
 
-        private void GetLockoutData(DirectorySearcher searcher)
+        static DateTime ADEpoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        static LockoutSet EmptyLockoutSet = new LockoutSet("null", "null", 0, ADEpoc, ADEpoc, false, ADEpoc, ADEpoc, ADEpoc);
+
+        private LockoutSet GetLockoutData(DirectorySearcher searcher)
         {
             //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), Identity);
-            DateTime epoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            
             searcher.PropertiesToLoad.Clear();
             searcher.PropertiesToLoad.Add("samaccountname");
             searcher.PropertiesToLoad.Add("badPwdCount");
@@ -73,21 +86,16 @@
             searcher.PropertiesToLoad.Add("pwdlastset");
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
             SearchResult sr = searcher.FindOne();
-            WriteObject(sr.Properties);
-
-            WriteObject(new LockoutSet(searcher.SearchRoot.Name,
-                (string)sr.Properties["samaccountname"][0], 
-                (int)sr.Properties["badPwdCount"][0], 
-                epoc.AddMilliseconds((long)sr.Properties["badpasswordtime"][0] * 0.0001), 
-                epoc.AddMilliseconds((long)sr.Properties["lastLogon"][0] * 0.0001), 
-                ((int)sr.Properties["useraccountcontrol"][0] & 0x2) == 0x2,
-                epoc.AddMilliseconds((long)sr.Properties["lockouttime"][0] * 0.0001), 
-                epoc.AddMilliseconds((long)sr.Properties["msDS-UserPasswordExpiryTimeComputed"][0] * 0.0001), 
-                epoc.AddMilliseconds((long)sr.Properties["pwdlastset"][0] * 0.0001)));
-
-            //WriteObject(sr.Properties);
-            //LockoutSet lockoutSet = new LockoutSet("", user.UserPrincipalName, user.BadLogonCount, user.LastBadPasswordAttempt, user.LastLogon, user.Enabled, user.IsAccountLockedOut(), user.AccountLockoutTime, (DirectoryEntry)user.GetUnderlyingObject().);
-            //WriteObject(lockoutSet);
+            
+            return new LockoutSet(searcher.SearchRoot.Name,
+                sr.Properties.Contains("samaccountname") ? (string)sr.Properties["samaccountname"][0] : EmptyLockoutSet.SamAccountName,
+                sr.Properties.Contains("badPwdCount") ? (int)sr.Properties["badPwdCount"][0] : EmptyLockoutSet.BadPwdCount,
+                sr.Properties.Contains("badpasswordtime") ? ADEpoc.AddMilliseconds((long)sr.Properties["badpasswordtime"][0] * 0.0001) : EmptyLockoutSet.LastBadPasswordAttempt,
+                sr.Properties.Contains("lastLogon") ? ADEpoc.AddMilliseconds((long)sr.Properties["lastLogon"][0] * 0.0001) : EmptyLockoutSet.LastLogonDate,
+                sr.Properties.Contains("useraccountcontrol") ? ((int)sr.Properties["useraccountcontrol"][0] & 0x2) == 0 : EmptyLockoutSet.Enabled,
+                sr.Properties.Contains("lockouttime") ? ADEpoc.AddMilliseconds((long)sr.Properties["lockouttime"][0] * 0.0001) : EmptyLockoutSet.LockoutTime,
+                sr.Properties.Contains("msDS-UserPasswordExpiryTimeComputed") ? ADEpoc.AddMilliseconds((long)sr.Properties["msDS-UserPasswordExpiryTimeComputed"][0] * 0.0001) : EmptyLockoutSet.PasswordExpires,
+                sr.Properties.Contains("pwdlastset") ? ADEpoc.AddMilliseconds((long)sr.Properties["pwdlastset"][0] * 0.0001) : EmptyLockoutSet.PasswordLastSet);
 
         }
     }
@@ -97,25 +105,24 @@
         public LockoutSet(string server, string userPrincipalName, int badPwdCound, DateTime lastBadPasswordAttempt, DateTime lastLogonDate, bool enabled, DateTime lockoutTime, DateTime passwordExpires, DateTime passwordLastSet)
         {
             Server = server;
-            UserPrincipalName = userPrincipalName;
-            BadPwdCound = badPwdCound;
+            SamAccountName = userPrincipalName;
+            BadPwdCount = badPwdCound;
             LastBadPasswordAttempt = lastBadPasswordAttempt;
             LastLogonDate = lastLogonDate;
             Enabled = enabled;
             LockoutTime = lockoutTime;
+            PasswordExpires = passwordExpires;
             PasswordLastSet = passwordLastSet;
         }
 
         public String Server { get; }
-        public String UserPrincipalName { get; }
-        public int BadLogonCount { get; }
-        public int BadPwdCound { get; }
+        public String SamAccountName { get; }
+        public int BadPwdCount { get; }
         public DateTime LastBadPasswordAttempt { get; }
         public DateTime LastLogonDate { get; }
-        public bool Enabled { get; }
-        public bool LockedOut { get; }
+        public bool Enabled { get; }        
         public DateTime LockoutTime { get; }
-        public bool PasswordExpired { get; }
+        public DateTime PasswordExpires { get; }
         public DateTime PasswordLastSet { get; }
     }
 
