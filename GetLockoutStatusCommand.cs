@@ -6,6 +6,7 @@
     using System.Management.Automation.Runspaces;
     using System.DirectoryServices;
     using System.DirectoryServices.ActiveDirectory;
+    using System.DirectoryServices.AccountManagement;
     using System.Threading.Tasks;
 
     [Cmdlet(VerbsCommon.Get, "LockoutStatus")]
@@ -59,7 +60,18 @@
 
         private void GetLockoutData(DirectorySearcher searcher)
         {
+            //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), Identity);
+
             WriteDebug("1");
+            searcher.PropertiesToLoad.Clear();
+            searcher.PropertiesToLoad.Add("userprincipalname");
+            searcher.PropertiesToLoad.Add("badPwdCound");
+            searcher.PropertiesToLoad.Add("badpasswordtime");
+            searcher.PropertiesToLoad.Add("lastLogon");
+            searcher.PropertiesToLoad.Add("enabled");
+            searcher.PropertiesToLoad.Add("lockouttime");
+            searcher.PropertiesToLoad.Add("msDS-UserPasswordExpiryTimeComputed");
+            searcher.PropertiesToLoad.Add("pwdlastpassword");
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
             WriteDebug("2");
             SearchResult sr = searcher.FindOne();
@@ -67,17 +79,7 @@
             DirectoryEntry directoryEntry = sr.GetDirectoryEntry();
             WriteDebug("4");
             WriteObject(directoryEntry);
-            //LockoutSet lockoutSet = new LockoutSet(searcher.SearchRoot.Name,
-            //    (string)directoryEntry.Properties["userPrincipalName"].Value,
-            //    (int)directoryEntry.Properties["badLogonCount"].Value,
-            //    (int)directoryEntry.Properties["badPwdCound"].Value,
-            //    (DateTime)directoryEntry.Properties["lastBadPasswordAttempt"].Value,
-            //    (DateTime)directoryEntry.Properties["lastLogonDate"].Value,
-            //    (bool)directoryEntry.Properties["enabled"].Value,
-            //    (bool)directoryEntry.Properties["lockedOut"].Value,
-            //    (DateTime)directoryEntry.Properties["lockoutTime"].Value,
-            //    (bool)directoryEntry.Properties["passwordExpired"].Value,
-            //    (DateTime)directoryEntry.Properties["passwordLastSet"].Value);
+            //LockoutSet lockoutSet = new LockoutSet("", user.UserPrincipalName, user.BadLogonCount, user.LastBadPasswordAttempt, user.LastLogon, user.Enabled, user.IsAccountLockedOut(), user.AccountLockoutTime, (DirectoryEntry)user.GetUnderlyingObject().);
             //WriteObject(lockoutSet);
 
         }
