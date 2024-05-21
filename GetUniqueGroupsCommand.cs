@@ -63,7 +63,7 @@
         private HashSet<string> GetUserGroups(string user, DirectorySearcher s)
         {
             HashSet<string> userGroups = new HashSet<string>();
-            s.Filter = $"(&(objectclass={Class})({SearchProperty}={user}";
+            s.Filter = $"(&(objectclass={Class})({SearchProperty}={user}))";
             s.PropertiesToLoad.Clear();
             s.PropertiesToLoad.Add("memberof");
             SearchResult sr = s.FindOne();
@@ -71,16 +71,15 @@
             {
                 if (sr.Properties.Contains("memberof"))
                 {
-                    string[] members = ((string)sr.Properties["memberof"][0]).Split('\n');
-                    foreach (string member in members)
+                    for (int i = 0; i < sr.Properties["memberof"].Count; i++)
                     {
-                        s.Filter = $"(&(objectclass=group)(distinguishedName={member}";
+                        s.Filter = $"(&(objectclass=group)(distinguishedName={(string)sr.Properties["memberof"][i]}))";
                         s.PropertiesToLoad.Clear();
                         s.PropertiesToLoad.Add("name");
                         sr = s.FindOne();
                         if (sr != null)
                         {
-                            userGroups.Add(member);
+                            userGroups.Add((string)sr.Properties["memberof"][i]);
                         }
                     }
                 }

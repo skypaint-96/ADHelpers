@@ -8,6 +8,7 @@
     using System.DirectoryServices.ActiveDirectory;
     using System.DirectoryServices.AccountManagement;
     using System.Threading.Tasks;
+    using System.Collections;
 
     [Cmdlet(VerbsCommon.Get, "ADUserNames")]
     [OutputType(typeof(IEnumerable<UserNamesSet>))]
@@ -48,6 +49,19 @@
             if (sr != null )
             {
                 ResultPropertyCollection r = sr.Properties;
+                string proxyAddresses = "";
+                if (r.Contains("proxyaddresses"))
+                {
+                    for (int i = 0; i < r["Proxyaddresses"].Count; i++)
+                    {
+                        proxyAddresses += Environment.NewLine + (string)r["Proxyaddresses"][i];
+                    }
+                }
+                else
+                {
+                    proxyAddresses = EmptyUsernameSet.ProxyAddresses;
+                }
+
                 uns = new UserNamesSet(r.Contains("samaccountname") ? (string)r["samaccountname"][0] : EmptyUsernameSet.SamAccountName,
                     r.Contains("userprincipalname") ? (string)r["userprincipalname"][0] : EmptyUsernameSet.UserPrincipalName,
                     r.Contains("targetaddress") ? (string)r["targetaddress"][0] : EmptyUsernameSet.TargetAddress,
@@ -55,7 +69,7 @@
                     r.Contains("displayname") ? (string)r["displayname"][0] : EmptyUsernameSet.DisplayName,
                     r.Contains("mail") ? (string)r["mail"][0] : EmptyUsernameSet.EmailAddress,
                     r.Contains("Mailnickname") ? (string)r["Mailnickname"][0] : EmptyUsernameSet.MailNickname,
-                    r.Contains("Proxyaddresses") ? (string)r["Proxyaddresses"][0] : EmptyUsernameSet.ProxyAddress);
+                    proxyAddresses);
             }
 
             WriteObject(uns);
@@ -73,7 +87,7 @@
                 DisplayName = displayName;
                 EmailAddress = emailAddress;
                 MailNickname = mailNickname;
-                ProxyAddress = proxyAddress;
+                ProxyAddresses = proxyAddress;
             }
 
             public string SamAccountName { get; }
@@ -83,7 +97,7 @@
             public string DisplayName { get; }
             public string EmailAddress { get; }
             public string MailNickname { get; }
-            public string ProxyAddress { get; set; }
+            public string ProxyAddresses { get; set; }
         }
     }
 }
