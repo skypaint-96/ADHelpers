@@ -8,6 +8,7 @@
     using System.DirectoryServices.ActiveDirectory;
     using System.DirectoryServices.AccountManagement;
     using System.Threading.Tasks;
+    using System.Data;
 
     [Cmdlet(VerbsCommon.Get, "UniqueGroups")]
     [OutputType(typeof(Dictionary<string, HashSet<string>>))]
@@ -38,29 +39,28 @@
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
-            Dictionary<string, HashSet<string>> output = new Dictionary<string, HashSet<string>>
-            {
-                { "CommonGroups", new HashSet<string>() }
-            };
+            Dictionary<string, HashSet<string>> output = new Dictionary<string, HashSet<string>>();
+            HashSet<string> CommonGroups = new HashSet<string>();
             WriteDebug("1");
 
             DirectorySearcher s = new DirectorySearcher();
             WriteDebug("2");
             output.Add(Identites[0], GetUserGroups(Identites[0], s));
-            output["CommonGroups"].UnionWith(output[Identites[0]]);
+            CommonGroups.UnionWith(output[Identites[0]]);
             for (int i = 1; i < Identites.Length; i++)
             {
                 WriteDebug("3");
                 output.Add(Identites[i], GetUserGroups(Identites[i], s));
-                output["CommonGroups"].IntersectWith(output[Identites[i]]);
+                CommonGroups.IntersectWith(output[Identites[i]]);
             }
 
             foreach (KeyValuePair<string, HashSet<string>> userGroup in output)
             {
                 WriteDebug("4");
-                output[userGroup.Key].ExceptWith(output["CommonGroups"]);
+                output[userGroup.Key].ExceptWith(CommonGroups);
             }
 
+            output.Add("CommonGroups", CommonGroups);
             WriteObject(output);
         }
 
