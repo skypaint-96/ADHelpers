@@ -77,13 +77,9 @@
             WriteDebug("6");
             if (sr != null)
             {
-                ResultPropertyCollection r = sr.Properties;
-                if (r.Contains("memberof"))
+                if (sr.Properties.Contains("memberof"))
                 {
-                    for (int i = 0; i < r["memberof"].Count; i++)
-                    {
-                        userGroups.Add((string)r["memberof"][i]);
-                    }
+                    userGroups = new HashSet<string>(((string)sr.Properties["memberof"][0]).Split('\n'));
                 }
             }
 
