@@ -75,23 +75,16 @@
             WriteDebug("6");
             if (sr != null)
             {
-                if (sr.Properties.Contains("memberof"))
+                ResultPropertyCollection r = sr.Properties;
+                if (r.Contains("memberof"))
                 {
-                    for (int i = 0; i < sr.Properties["memberof"].Count; i++)
+                    for (int i = 0; i < r["memberof"].Count; i++)
                     {
-                        WriteDebug("7");
-                        s.Filter = $"(&(objectclass=group)(distinguishedName={(string)sr.Properties["memberof"][i]}))";
-                        s.PropertiesToLoad.Clear();
-                        s.PropertiesToLoad.Add("name");
-                        sr = s.FindOne();
-                        if (sr != null)
-                        {
-                            userGroups.Add((string)sr.Properties["memberof"][i]);
-                        }
+                        userGroups.Add((string)r["memberof"][i]);
                     }
                 }
             }
-            
+
             return userGroups;
         }
     }
