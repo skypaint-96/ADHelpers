@@ -126,10 +126,5 @@
         public DateTime PasswordLastSet { get; }
     }
 
-    public enum SearchType
-    {
-        SamAccountName,
-        UserPrincipalName,
-        CN
-    }
+    
 }
