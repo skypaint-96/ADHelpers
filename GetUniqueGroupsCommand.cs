@@ -42,37 +42,44 @@
             {
                 { "CommonGroups", new HashSet<string>() }
             };
+            WriteDebug("1");
 
             DirectorySearcher s = new DirectorySearcher();
             for (int i = 0; i < Identites.Length; i++)
             {
+                WriteDebug("2");
                 output.Add(Identites[i], GetUserGroups(Identites[i], s));
             }
-            
+
             foreach (KeyValuePair<string, HashSet<string>> userGroup in output)
             {
+                WriteDebug("3");
                 output["CommonGroups"].UnionWith(userGroup.Value);
             }
 
             foreach (KeyValuePair<string, HashSet<string>> userGroup in output)
             {
+                WriteDebug("4");
                 output[userGroup.Key].UnionWith(output["CommonGroups"]);
             }
         }
 
         private HashSet<string> GetUserGroups(string user, DirectorySearcher s)
         {
+            WriteDebug("5");
             HashSet<string> userGroups = new HashSet<string>();
             s.Filter = $"(&(objectclass={Class})({SearchProperty}={user}))";
             s.PropertiesToLoad.Clear();
             s.PropertiesToLoad.Add("memberof");
             SearchResult sr = s.FindOne();
+            WriteDebug("6");
             if (sr != null)
             {
                 if (sr.Properties.Contains("memberof"))
                 {
                     for (int i = 0; i < sr.Properties["memberof"].Count; i++)
                     {
+                        WriteDebug("7");
                         s.Filter = $"(&(objectclass=group)(distinguishedName={(string)sr.Properties["memberof"][i]}))";
                         s.PropertiesToLoad.Clear();
                         s.PropertiesToLoad.Add("name");
