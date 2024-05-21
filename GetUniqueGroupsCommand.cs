@@ -45,22 +45,20 @@
             WriteDebug("1");
 
             DirectorySearcher s = new DirectorySearcher();
-            for (int i = 0; i < Identites.Length; i++)
-            {
-                WriteDebug("2");
-                output.Add(Identites[i], GetUserGroups(Identites[i], s));
-            }
-
-            foreach (KeyValuePair<string, HashSet<string>> userGroup in output)
+            WriteDebug("2");
+            output.Add(Identites[0], GetUserGroups(Identites[0], s));
+            output["CommonGroups"].UnionWith(output[Identites[0]]);
+            for (int i = 1; i < Identites.Length; i++)
             {
                 WriteDebug("3");
-                output["CommonGroups"].UnionWith(userGroup.Value);
+                output.Add(Identites[i], GetUserGroups(Identites[i], s));
+                output["CommonGroups"].IntersectWith(output[Identites[i]]);
             }
 
             foreach (KeyValuePair<string, HashSet<string>> userGroup in output)
             {
                 WriteDebug("4");
-                output[userGroup.Key].UnionWith(output["CommonGroups"]);
+                output[userGroup.Key].ExceptWith(output["CommonGroups"]);
             }
 
             WriteObject(output);
@@ -77,9 +75,13 @@
             WriteDebug("6");
             if (sr != null)
             {
-                if (sr.Properties.Contains("memberof"))
+                ResultPropertyCollection r = sr.Properties;
+                if (r.Contains("memberof"))
                 {
-                    userGroups = new HashSet<string>(((string)sr.Properties["memberof"][0]).Split('\n'));
+                    for (int i = 0; i < r["memberof"].Count; i++)
+                    {
+                        userGroups.Add((string)r["memberof"][i]);
+                    }
                 }
             }
 
