@@ -10,7 +10,7 @@
     using System.Threading.Tasks;
 
     [Cmdlet(VerbsCommon.Get, "ADUserNames")]
-    [OutputType(typeof(IEnumerable<LockoutSet>))]
+    [OutputType(typeof(IEnumerable<UserNamesSet>))]
     public class GetADUserNamesCommand : PSCmdlet
     {
         [Parameter(
@@ -27,6 +27,8 @@
             ValueFromPipelineByPropertyName = false)]
         public SearchType SearchProperty { get; set; } = SearchType.SamAccountName;
 
+        static UserNamesSet EmptyUsernameSet = new UserNamesSet("null", "null", "null", "null", "null", "null", "null", "null");
+
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
@@ -36,15 +38,52 @@
             searcher.PropertiesToLoad.Add("targetaddress");
             searcher.PropertiesToLoad.Add("name");
             searcher.PropertiesToLoad.Add("displayname");
-            searcher.PropertiesToLoad.Add("Emailaddress");
+            searcher.PropertiesToLoad.Add("mail");
             searcher.PropertiesToLoad.Add("Mailnickname");
             searcher.PropertiesToLoad.Add("Proxyaddresses");
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
             SearchResult sr = searcher.FindOne();
-            WriteObject(sr.Properties);
+            searcher.Dispose();
+            UserNamesSet uns = EmptyUsernameSet;
+            if (sr != null )
+            {
+                ResultPropertyCollection r = sr.Properties;
+                uns = new UserNamesSet(r.Contains("samaccountname") ? (string)r["samaccountname"][0] : EmptyUsernameSet.SamAccountName,
+                    r.Contains("userprincipalname") ? (string)r["userprincipalname"][0] : EmptyUsernameSet.UserPrincipalName,
+                    r.Contains("targetaddress") ? (string)r["targetaddress"][0] : EmptyUsernameSet.TargetAddress,
+                    r.Contains("name") ? (string)r["name"][0] : EmptyUsernameSet.Name,
+                    r.Contains("displayname") ? (string)r["displayname"][0] : EmptyUsernameSet.DisplayName,
+                    r.Contains("mail") ? (string)r["mail"][0] : EmptyUsernameSet.EmailAddress,
+                    r.Contains("Mailnickname") ? (string)r["Mailnickname"][0] : EmptyUsernameSet.MailNickname,
+                    r.Contains("Proxyaddresses") ? (string)r["Proxyaddresses"][0] : EmptyUsernameSet.ProxyAddress);
+            }
 
+            WriteObject(uns);
+            
         }
 
-        //public user
+        public class UserNamesSet
+        {
+            public UserNamesSet(string samAccountName, string userPrincipalName, string targetAddress, string name, string displayName, string emailAddress, string mailNickname, string proxyAddress)
+            {
+                SamAccountName = samAccountName;
+                UserPrincipalName = userPrincipalName;
+                TargetAddress = targetAddress;
+                Name = name;
+                DisplayName = displayName;
+                EmailAddress = emailAddress;
+                MailNickname = mailNickname;
+                ProxyAddress = proxyAddress;
+            }
+
+            public string SamAccountName { get; }
+            public string UserPrincipalName { get; }
+            public string TargetAddress { get; }
+            public string Name { get; }
+            public string DisplayName { get; }
+            public string EmailAddress { get; }
+            public string MailNickname { get; }
+            public string ProxyAddress { get; set; }
+        }
     }
 }
