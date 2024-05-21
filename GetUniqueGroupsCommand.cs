@@ -62,6 +62,8 @@
                 WriteDebug("4");
                 output[userGroup.Key].UnionWith(output["CommonGroups"]);
             }
+
+            WriteObject(output);
         }
 
         private HashSet<string> GetUserGroups(string user, DirectorySearcher s)
