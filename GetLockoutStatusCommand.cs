@@ -2,12 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Management.Automation;
-    using System.Management.Automation.Runspaces;
     using System.DirectoryServices;
     using System.DirectoryServices.ActiveDirectory;
-    using System.DirectoryServices.AccountManagement;
-    using System.Threading.Tasks;
+    using System.Management.Automation;
 
     [Cmdlet(VerbsCommon.Get, "LockoutStatus")]
     [OutputType(typeof(IEnumerable<LockoutSet>))]
@@ -53,13 +50,14 @@
                 WriteObject(lockoutset);
             }
 
-}
+        }
 
         private Stack<LockoutSet> GetLockoutDataForAllServers()
         {
             Domain domain = Domain.GetCurrentDomain();
             Stack<LockoutSet> output = new Stack<LockoutSet>();
-            foreach(DomainController dc in domain.FindAllDiscoverableDomainControllers()) {
+            foreach (DomainController dc in domain.FindAllDiscoverableDomainControllers())
+            {
                 DirectorySearcher searcher = dc.GetDirectorySearcher();
                 output.Push(GetLockoutData(searcher));
             }
@@ -67,22 +65,22 @@
 
         }
 
-        static DateTime ADEpoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        static LockoutSet EmptyLockoutSet = new LockoutSet("null", "null", 0, ADEpoc, ADEpoc, false, ADEpoc, ADEpoc, ADEpoc);
+        private static DateTime ADEpoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        private static LockoutSet EmptyLockoutSet = new LockoutSet("null", "null", 0, ADEpoc, ADEpoc, false, ADEpoc, ADEpoc, ADEpoc);
 
         private LockoutSet GetLockoutData(DirectorySearcher searcher)
         {
             //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), Identity);
-            
+
             searcher.PropertiesToLoad.Clear();
-            searcher.PropertiesToLoad.Add("samaccountname");
-            searcher.PropertiesToLoad.Add("badPwdCount");
-            searcher.PropertiesToLoad.Add("badpasswordtime");
-            searcher.PropertiesToLoad.Add("lastLogon");
-            searcher.PropertiesToLoad.Add("useraccountcontrol");
-            searcher.PropertiesToLoad.Add("lockouttime");
-            searcher.PropertiesToLoad.Add("msDS-UserPasswordExpiryTimeComputed");
-            searcher.PropertiesToLoad.Add("pwdlastset");
+            _ = searcher.PropertiesToLoad.Add("samaccountname");
+            _ = searcher.PropertiesToLoad.Add("badPwdCount");
+            _ = searcher.PropertiesToLoad.Add("badpasswordtime");
+            _ = searcher.PropertiesToLoad.Add("lastLogon");
+            _ = searcher.PropertiesToLoad.Add("useraccountcontrol");
+            _ = searcher.PropertiesToLoad.Add("lockouttime");
+            _ = searcher.PropertiesToLoad.Add("msDS-UserPasswordExpiryTimeComputed");
+            _ = searcher.PropertiesToLoad.Add("pwdlastset");
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
             SearchResult sr = searcher.FindOne();
             string server = searcher.SearchRoot.Name;
@@ -125,11 +123,11 @@
         public int BadPwdCount { get; }
         public DateTime LastBadPasswordAttempt { get; }
         public DateTime LastLogonDate { get; }
-        public bool Enabled { get; }        
+        public bool Enabled { get; }
         public DateTime LockoutTime { get; }
         public DateTime PasswordExpires { get; }
         public DateTime PasswordLastSet { get; }
     }
 
-    
+
 }

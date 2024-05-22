@@ -2,13 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Management.Automation;
-    using System.Management.Automation.Runspaces;
     using System.DirectoryServices;
-    using System.DirectoryServices.ActiveDirectory;
-    using System.DirectoryServices.AccountManagement;
-    using System.Threading.Tasks;
-    using System.Collections;
+    using System.Management.Automation;
 
     [Cmdlet(VerbsCommon.Get, "ADUserNames")]
     [OutputType(typeof(IEnumerable<UserNamesSet>))]
@@ -28,25 +23,25 @@
             ValueFromPipelineByPropertyName = false)]
         public SearchType SearchProperty { get; set; } = SearchType.SamAccountName;
 
-        static UserNamesSet EmptyUsernameSet = new UserNamesSet("null", "null", "null", "null", "null", "null", "null", "null");
+        private static UserNamesSet EmptyUsernameSet = new UserNamesSet("null", "null", "null", "null", "null", "null", "null", "null");
 
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
             DirectorySearcher searcher = new DirectorySearcher();
-            searcher.PropertiesToLoad.Add("samaccountname");
-            searcher.PropertiesToLoad.Add("userprincipalname");
-            searcher.PropertiesToLoad.Add("targetaddress");
-            searcher.PropertiesToLoad.Add("name");
-            searcher.PropertiesToLoad.Add("displayname");
-            searcher.PropertiesToLoad.Add("mail");
-            searcher.PropertiesToLoad.Add("Mailnickname");
-            searcher.PropertiesToLoad.Add("Proxyaddresses");
+            _ = searcher.PropertiesToLoad.Add("samaccountname");
+            _ = searcher.PropertiesToLoad.Add("userprincipalname");
+            _ = searcher.PropertiesToLoad.Add("targetaddress");
+            _ = searcher.PropertiesToLoad.Add("name");
+            _ = searcher.PropertiesToLoad.Add("displayname");
+            _ = searcher.PropertiesToLoad.Add("mail");
+            _ = searcher.PropertiesToLoad.Add("Mailnickname");
+            _ = searcher.PropertiesToLoad.Add("Proxyaddresses");
             searcher.Filter = $"(&(objectclass=user)({SearchProperty}={Identity}))";
             SearchResult sr = searcher.FindOne();
             searcher.Dispose();
             UserNamesSet uns = EmptyUsernameSet;
-            if (sr != null )
+            if (sr != null)
             {
                 ResultPropertyCollection r = sr.Properties;
                 string proxyAddresses = "";
@@ -73,7 +68,7 @@
             }
 
             WriteObject(uns);
-            
+
         }
 
         public class UserNamesSet

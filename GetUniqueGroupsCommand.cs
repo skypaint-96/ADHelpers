@@ -1,14 +1,8 @@
 ﻿namespace ADHelpers
 {
-    using System;
     using System.Collections.Generic;
-    using System.Management.Automation;
-    using System.Management.Automation.Runspaces;
     using System.DirectoryServices;
-    using System.DirectoryServices.ActiveDirectory;
-    using System.DirectoryServices.AccountManagement;
-    using System.Threading.Tasks;
-    using System.Data;
+    using System.Management.Automation;
 
     [Cmdlet(VerbsCommon.Get, "UniqueGroups")]
     [OutputType(typeof(Dictionary<string, HashSet<string>>))]
@@ -41,22 +35,18 @@
         {
             Dictionary<string, HashSet<string>> output = new Dictionary<string, HashSet<string>>();
             HashSet<string> CommonGroups = new HashSet<string>();
-            WriteDebug("1");
 
             DirectorySearcher s = new DirectorySearcher();
-            WriteDebug("2");
             output.Add(Identites[0], GetUserGroups(Identites[0], s));
             CommonGroups.UnionWith(output[Identites[0]]);
             for (int i = 1; i < Identites.Length; i++)
             {
-                WriteDebug("3");
                 output.Add(Identites[i], GetUserGroups(Identites[i], s));
                 CommonGroups.IntersectWith(output[Identites[i]]);
             }
 
             foreach (KeyValuePair<string, HashSet<string>> userGroup in output)
             {
-                WriteDebug("4");
                 output[userGroup.Key].ExceptWith(CommonGroups);
             }
 
@@ -66,13 +56,11 @@
 
         private HashSet<string> GetUserGroups(string user, DirectorySearcher s)
         {
-            WriteDebug("5");
             HashSet<string> userGroups = new HashSet<string>();
             s.Filter = $"(&(objectclass={Class})({SearchProperty}={user}))";
             s.PropertiesToLoad.Clear();
-            s.PropertiesToLoad.Add("memberof");
+            _ = s.PropertiesToLoad.Add("memberof");
             SearchResult sr = s.FindOne();
-            WriteDebug("6");
             if (sr != null)
             {
                 ResultPropertyCollection r = sr.Properties;
@@ -80,7 +68,7 @@
                 {
                     for (int i = 0; i < r["memberof"].Count; i++)
                     {
-                        userGroups.Add((string)r["memberof"][i]);
+                        _ = userGroups.Add((string)r["memberof"][i]);
                     }
                 }
             }
@@ -89,5 +77,5 @@
         }
     }
 
-    
+
 }
