@@ -1,6 +1,6 @@
 ﻿namespace ADHelpers
 {
-    public enum ObjectClass
+    public enum ADObjectClass
     {
         User,
         Computer,
