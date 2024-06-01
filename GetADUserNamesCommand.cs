@@ -5,28 +5,31 @@
     using System.DirectoryServices;
     using System.Management.Automation;
 
+    /// <summary>
+    /// <para type="synopsis">"Used to get the names of an AD user, useful as it shows if there are any missmatches/misspellings.</para>
+    /// <para type="link" uri="(https://github.com/skypaint-96/ADHelpers)">[Project Source]</para>
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "ADUserNames")]
     [OutputType(typeof(IEnumerable<UserNamesSet>))]
-    public class GetADUserNamesCommand : PSCmdlet
+    public class GetADUserNamesCommand : ADSearcher
     {
+        /// <summary>
+        /// <para type="description">Identifier of AD Object, use -SearchProperty to chose which field to search on. (accepts '*'s)</para>
+        /// </summary>
         [Parameter(
             Mandatory = true,
             Position = 0,
-            ValueFromPipeline = true,
-            ValueFromPipelineByPropertyName = true)]
-        public string Identity { get; set; }
-
-        [Parameter(
-            Mandatory = false,
-            Position = 1,
             ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = false)]
-        public SearchType SearchProperty { get; set; } = SearchType.SamAccountName;
+            ValueFromPipelineByPropertyName = false,
+            HelpMessage = "Identifier of AD Object. (accepts '*'s)")]
+        public string Identity { get; set; }
 
         private static UserNamesSet EmptyUsernameSet = new UserNamesSet("null", "null", "null", "null", "null", "null", "null", "null");
 
-        // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
-        protected override void ProcessRecord()
+        /// <summary>
+        /// Entry point of command.
+        /// </summary>
+        protected override void EndProcessing()
         {
             DirectorySearcher searcher = new DirectorySearcher();
             _ = searcher.PropertiesToLoad.Add("samaccountname");
@@ -71,8 +74,22 @@
 
         }
 
+        /// <summary>
+        /// A class to represent the data returned by the GetADUserNamesCommand, should hold all data containing references to the user's actual name.
+        /// </summary>
         public class UserNamesSet
         {
+            /// <summary>
+            /// Basic constructor for creating a UserNamesSet object.
+            /// </summary>
+            /// <param name="samAccountName">User's samAccountName.</param>
+            /// <param name="userPrincipalName">User's userPrincipalName.</param>
+            /// <param name="targetAddress">User's targetAddress.</param>
+            /// <param name="name">User's name/CN.</param>
+            /// <param name="displayName">User's displayName.</param>
+            /// <param name="emailAddress">User's Mail property.</param>
+            /// <param name="mailNickname">User's mailNickname.</param>
+            /// <param name="proxyAddress">User's proxyAddresses.</param>
             public UserNamesSet(string samAccountName, string userPrincipalName, string targetAddress, string name, string displayName, string emailAddress, string mailNickname, string proxyAddress)
             {
                 SamAccountName = samAccountName;
@@ -85,13 +102,37 @@
                 ProxyAddresses = proxyAddress;
             }
 
+            /// <summary>
+            /// User's samAccountName.
+            /// </summary>
             public string SamAccountName { get; }
+            /// <summary>
+            /// User's userPrincipalName.
+            /// </summary>
             public string UserPrincipalName { get; }
+            /// <summary>
+            /// User's targetAddress.
+            /// </summary>
             public string TargetAddress { get; }
+            /// <summary>
+            /// User's name/CN.
+            /// </summary>
             public string Name { get; }
+            /// <summary>
+            /// User's displayName.
+            /// </summary>
             public string DisplayName { get; }
+            /// <summary>
+            /// User's Mail property.
+            /// </summary>
             public string EmailAddress { get; }
+            /// <summary>
+            /// User's mailNickname.
+            /// </summary>
             public string MailNickname { get; }
+            /// <summary>
+            /// User's proxyAddresses, easiest if outputted as whole string, powershell by default tends to only show a section of this.
+            /// </summary>
             public string ProxyAddresses { get; set; }
         }
     }

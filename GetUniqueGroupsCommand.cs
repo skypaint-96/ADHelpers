@@ -5,38 +5,15 @@
     using System.Management.Automation;
 
     /// <summary>
-    /// <para type="synopsis">Used to check what groups are specific to a certain AD Object compared to another.</para>
-    /// <example>
-    /// <para>Getting groups for two users via their userprincipalname where JSmith is in 2 groups that ARimmer is not.</para>
-    /// <code>
-    /// 
-    /// > $o = Get-UniqueGroups -Identities JSmith@corpo.net, ARimmer@corpo.net -SearchProperty userprincipalname -ADClass User
-    /// > $o['JSmith']
-    /// CN=Group1ThatOnlyJSmithIsIn,OU=Groups,DC=Corpo,DC=Net
-    /// CN=Group2ThatOnlyJSmithIsIn,OU=Groups,DC=Corpo,DC=Net
-    /// > $o['ARimmer']
-    /// > $o['CommonGroups']
-    /// CN=GroupThatBothUsersAreIn,OU=Groups,DC=Corpo,DC=Net
-    /// </code>
-    /// </example>
-    /// <example>
-    /// <para>Example 2: Getting groups for two Computers via their canonicalname.</para>
-    /// <code>
-    /// > $o = Get-UniqueGroups -Identities Workstation52, Laptop1 -SearchProperty cn -ADClass Computer</code>
-    /// > $o['Laptop1']
-    /// CN=SCLaptopSpecificSoftware,OU=Groups,DC=Corpo,DC=Net
-    /// > $o['Workstation52']
-    /// CN=SCWorkstationSpecificSoftware,OU=Groups,DC=Corpo,DC=Net
-    /// > $o['CommonGroups']
-    /// </example>
+    /// <para type="synopsis">Outputs a dictionary of the groups unique to the accounts specified in the identities parameter as well as a "CommonGroups" entry for groups that all objects are in.</para>
     /// <para type="link" uri="(https://github.com/skypaint-96/ADHelpers)">[Project Source]</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "UniqueGroups")]
     [OutputType(typeof(Dictionary<string, HashSet<string>>))]
-    public class GetUniqueGroupsCommand : PSCmdlet
+    public class GetUniqueGroupsCommand : ADSearcher
     {
         /// <summary>
-        /// <para type="description">Identifier of AD Object. (accepts '*'s)</para>
+        /// <para type="description">Identifier of AD Object, use -SearchProperty to chose which field to search on. (accepts '*'s)</para>
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -45,26 +22,6 @@
             ValueFromPipelineByPropertyName = false,
             HelpMessage = "Identifier of AD Object. (accepts '*'s)")]
         public string[] Identites { get; set; }
-
-        /// <summary>
-        /// <para type="description">Which property to search for the identifier. (Accepts tab completion)</para>
-        /// </summary>
-        [Parameter(
-            Mandatory = false,
-            Position = 1,
-            ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = false)]
-        public SearchType SearchProperty { get; set; } = SearchType.SamAccountName;
-
-        /// <summary>
-        /// <para type="description">Which type of AD Object to search for. (Accepts tab completion)</para>
-        /// </summary>
-        [Parameter(
-            Mandatory = false,
-            Position = 2,
-            ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = false)]
-        public ADObjectClass ADClass { get; set; } = ADObjectClass.User;
 
         /// <summary>
         /// <para type="description">Entry point of command.</para>
