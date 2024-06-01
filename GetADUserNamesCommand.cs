@@ -6,7 +6,7 @@
     using System.Management.Automation;
 
     /// <summary>
-    /// <para type="synopsis">"Used to get the names of an AD user, useful as it shows if there are any missmatches/misspellings.</para>
+    /// <para type="synopsis">Used to get the names of an AD user, useful as it shows if there are any missmatches/misspellings.</para>
     /// <para type="link" uri="(https://github.com/skypaint-96/ADHelpers)">[Project Source]</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ADUserNames")]
