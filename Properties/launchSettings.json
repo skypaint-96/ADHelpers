@@ -6,7 +6,10 @@
     "adhelpersLauncher": {
       "commandName": "Executable",
       "executablePath": "pwsh.exe",
-      "commandLineArgs": "-NoExit\r\n-Command \"import-module .\\$(AssemblyName).dll\""
+      "commandLineArgs": "-NoExit\r\n-Command \"import-module .\\$(AssemblyName).dll\"",
+      "remoteDebugEnabled": false,
+      "remoteDebugMachine": "",
+      "authenticationMode": "Windows"
     }
   }
 }

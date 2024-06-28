@@ -9,9 +9,9 @@
     /// <para type="synopsis">Used to get the names of an AD user, useful as it shows if there are any missmatches/misspellings.</para>
     /// <para type="link" uri="(https://github.com/skypaint-96/ADHelpers)">[Project Source]</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ADUserNames")]
+    [Cmdlet(VerbsCommon.Get, "ADSIUserNames")]
     [OutputType(typeof(IEnumerable<UserNamesSet>))]
-    public class GetADUserNamesCommand : ADSearcher
+    public class GetADSIUserNamesCommand : ADSearcher
     {
         /// <summary>
         /// <para type="description">Identifier of AD Object, use -SearchProperty to chose which field to search on. (accepts '*'s)</para>

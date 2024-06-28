@@ -8,9 +8,9 @@
     /// <para type="synopsis">Outputs a dictionary of the groups unique to the accounts specified in the identities parameter as well as a "CommonGroups" entry for groups that all objects are in.</para>
     /// <para type="link" uri="(https://github.com/skypaint-96/ADHelpers)">[Project Source]</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "UniqueGroups")]
+    [Cmdlet(VerbsData.Compare, "ADSIObjectMemberships")]
     [OutputType(typeof(Dictionary<string, HashSet<string>>))]
-    public class GetUniqueGroupsCommand : ADSearcher
+    public class CompareADSIObjectMembershipsCommand : ADSearcher
     {
         /// <summary>
         /// <para type="description">Identifier of AD Object, use -SearchProperty to chose which field to search on. (accepts '*'s)</para>

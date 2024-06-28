@@ -10,9 +10,9 @@
     /// <para type="synopsis">Returns an user's last login/failed login/expiry times etc.</para>
     /// <para type="link" uri="(https://github.com/skypaint-96/ADHelpers)">[Project Source]</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "LockoutStatus")]
+    [Cmdlet(VerbsCommon.Get, "ADSILockoutStatus")]
     [OutputType(typeof(IEnumerable<LockoutSet>))]
-    public class GetLockoutStatusCommand : ADSearcher
+    public class GetADSILockoutStatusCommand : ADSearcher
     {
         /// <summary>
         /// <para type="description">Identifier of AD Object, use -SearchProperty to chose which field to search on. (accepts '*'s)</para>
@@ -63,8 +63,8 @@
 
         }
 
-        private static DateTime ADEpoc = new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        private static LockoutSet EmptyLockoutSet = new LockoutSet("null", "null", 0, ADEpoc, ADEpoc, false, ADEpoc, ADEpoc, ADEpoc);
+        
+        private static LockoutSet EmptyLockoutSet = new LockoutSet("null", "null", 0, DateTime.MinValue, DateTime.MinValue, false, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue);
 
         private LockoutSet GetLockoutData(DirectorySearcher searcher)
         {
@@ -76,6 +76,7 @@
             _ = searcher.PropertiesToLoad.Add("badpasswordtime");
             _ = searcher.PropertiesToLoad.Add("lastLogon");
             _ = searcher.PropertiesToLoad.Add("useraccountcontrol");
+            _ = searcher.PropertiesToLoad.Add("AccountExpires");
             _ = searcher.PropertiesToLoad.Add("lockouttime");
             _ = searcher.PropertiesToLoad.Add("msDS-UserPasswordExpiryTimeComputed");
             _ = searcher.PropertiesToLoad.Add("pwdlastset");
@@ -87,14 +88,15 @@
             {
                 ResultPropertyCollection r = sr.Properties;
                 ls = new LockoutSet(server,
-                r.Contains("samaccountname") ? (string)r["samaccountname"][0] : EmptyLockoutSet.SamAccountName,
-                r.Contains("badPwdCount") ? (int)r["badPwdCount"][0] : EmptyLockoutSet.BadPwdCount,
-                r.Contains("badpasswordtime") ? ADEpoc.AddMilliseconds((long)r["badpasswordtime"][0] * 0.0001) : EmptyLockoutSet.LastBadPasswordAttempt,
-                r.Contains("lastLogon") ? ADEpoc.AddMilliseconds((long)r["lastLogon"][0] * 0.0001) : EmptyLockoutSet.LastLogonDate,
-                r.Contains("useraccountcontrol") ? ((int)r["useraccountcontrol"][0] & 0x2) == 0 : EmptyLockoutSet.IsEnabled,
-                r.Contains("lockouttime") ? ADEpoc.AddMilliseconds((long)r["lockouttime"][0] * 0.0001) : EmptyLockoutSet.LockoutTime,
-                r.Contains("msDS-UserPasswordExpiryTimeComputed") ? ADEpoc.AddMilliseconds((long)r["msDS-UserPasswordExpiryTimeComputed"][0] * 0.0001) : EmptyLockoutSet.PasswordExpires,
-                r.Contains("pwdlastset") ? ADEpoc.AddMilliseconds((long)r["pwdlastset"][0] * 0.0001) : EmptyLockoutSet.PasswordLastSet);
+                r.Contains("samaccountname") ? (string)r["samaccountname"][0] : "null",
+                r.Contains("badPwdCount") ? (int)r["badPwdCount"][0] : 0,
+                r.Contains("badpasswordtime") ? DateTime.FromFileTimeUtc((long)r["badpasswordtime"][0]) : DateTime.MinValue,
+                r.Contains("lastLogon") ? DateTime.FromFileTimeUtc((long)r["lastLogon"][0]) : DateTime.MinValue,
+                r.Contains("useraccountcontrol") ? ((int)r["useraccountcontrol"][0] & 0x2) == 0 : false,
+                r.Contains("accountexpires") ? DateTime.FromFileTimeUtc((long)r["accountexpires"][0]) : DateTime.MinValue,
+                r.Contains("lockouttime") ? DateTime.FromFileTimeUtc((long)r["lockouttime"][0]) : DateTime.MinValue,
+                r.Contains("msDS-UserPasswordExpiryTimeComputed") ? DateTime.FromFileTimeUtc((long)r["msDS-UserPasswordExpiryTimeComputed"][0]) : DateTime.MinValue,
+                r.Contains("pwdlastset") ? DateTime.FromFileTimeUtc((long)r["pwdlastset"][0]) : DateTime.MinValue);
             }
             return ls;
 
@@ -104,7 +106,7 @@
     /// <summary>
     /// Represents data returned from the GetLockoutStatusCommand.
     /// </summary>
-    public class LockoutSet
+    public class LockoutSet : IADData
     {
         /// <summary>
         /// Basic ctor for the GetLockoutStatusCommand return type.
@@ -115,10 +117,11 @@
         /// <param name="lastBadPasswordAttempt"></param>
         /// <param name="lastLogonDate"></param>
         /// <param name="enabled"></param>
+        /// <param name="accountExpires"></param>
         /// <param name="lockoutTime"></param>
         /// <param name="passwordExpires"></param>
         /// <param name="passwordLastSet"></param>
-        public LockoutSet(string server, string userPrincipalName, int badPwdCound, DateTime lastBadPasswordAttempt, DateTime lastLogonDate, bool enabled, DateTime lockoutTime, DateTime passwordExpires, DateTime passwordLastSet)
+        public LockoutSet(string server, string userPrincipalName, int badPwdCound, DateTime lastBadPasswordAttempt, DateTime lastLogonDate, bool enabled, DateTime accountExpires, DateTime lockoutTime, DateTime passwordExpires, DateTime passwordLastSet)
         {
             Server = server;
             SamAccountName = userPrincipalName;
@@ -126,6 +129,7 @@
             LastBadPasswordAttempt = lastBadPasswordAttempt;
             LastLogonDate = lastLogonDate;
             IsEnabled = enabled;
+            AccountExpires = accountExpires;
             LockoutTime = lockoutTime;
             PasswordExpires = passwordExpires;
             PasswordLastSet = passwordLastSet;
@@ -151,6 +155,10 @@
         /// Datetime of last successful login.
         /// </summary>
         public DateTime LastLogonDate { get; }
+        /// <summary>
+        /// Date the account expires.
+        /// </summary>
+        public DateTime AccountExpires { get; set; }
         /// <summary>
         /// Is the account Enabled.
         /// </summary>
