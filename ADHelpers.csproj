@@ -10,7 +10,36 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <SignAssembly>False</SignAssembly>
+	<Version>1.$([System.DateTime]::Now.ToString(MMdd)).$([System.DateTime]::Now.ToString(HHmm))</Version>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ADCreate.ps1" />
+    <None Remove="LICENSE.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="AdHelpers.psd1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ApplicationDefinition>
+    <ApplicationDefinition Include="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </ApplicationDefinition>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ADCreate.ps1" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MatejKafka.XmlDoc2CmdletDoc" Version="0.4.2">
@@ -26,12 +55,28 @@
 
   <ItemGroup>
     <None Update="AdHelpers.psd1">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Update="LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <FinalDocFile Remove="bin\Debug\netstandard2.0\ADHelpers.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\netstandard2.0\ADHelpers.deps.json" />
+    <None Include="bin\Debug\netstandard2.0\ADHelpers.dll" />
+    <None Include="bin\Debug\netstandard2.0\AdHelpers.psd1" />
+    <None Include="bin\Debug\netstandard2.0\ADHelpers.xml" />
+    <None Include="bin\Debug\netstandard2.0\System.Buffers.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.DirectoryServices.AccountManagement.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.DirectoryServices.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.IO.FileSystem.AccessControl.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.Memory.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.Numerics.Vectors.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.Security.AccessControl.dll" />
+    <None Include="bin\Debug\netstandard2.0\System.Security.Principal.Windows.dll" />
   </ItemGroup>
 
 </Project>
