@@ -28,9 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ApplicationDefinition Include="AdHelpers.psd1">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ApplicationDefinition>
     <ApplicationDefinition Include="LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -54,12 +51,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="AdHelpers.psd1">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <FinalDocFile Remove="bin\Debug\netstandard2.0\ADHelpers.xml" />
   </ItemGroup>
 
@@ -77,6 +68,10 @@
     <None Include="bin\Debug\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll" />
     <None Include="bin\Debug\netstandard2.0\System.Security.AccessControl.dll" />
     <None Include="bin\Debug\netstandard2.0\System.Security.Principal.Windows.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="publish\" />
   </ItemGroup>
 
 </Project>

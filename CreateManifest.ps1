@@ -2,12 +2,13 @@
 
 
 #$domain.DoCallBack({
+import-module ".\publish\adhelpers\adhelpers.dll" -scope local
+$version = (get-module AdHelpers).version
+remove-module adhelpers -force
 
-$path = (resolve-path '.\publish\adhelpers\').Path
-
-New-ModuleManifest -Path ($path + 'AdHelpers.psd1') `
+New-ModuleManifest -Path '.\publish\adhelpers\AdHelpers.psd1' `
 -RootModule "ADHelpers" `
--moduleversion ([System.Reflection.Assembly]::LoadFrom(($path + 'AdHelpers.dll')).GetCustomAttributesData()[7].constructorarguments.value) `
+-moduleversion $version `
 -Guid '55b99733-8488-493e-a3cd-05cfcea90974' `
 -Author 'Mason Kerr' `
 -CompanyName 'Pasifico' `
@@ -18,6 +19,7 @@ New-ModuleManifest -Path ($path + 'AdHelpers.psd1') `
 -ProjectUri 'https://github.com/skypaint-96/ADHelpers' `
 -DefaultCommandPrefix 'ADEX'
 
+exit
 #});
 
 
