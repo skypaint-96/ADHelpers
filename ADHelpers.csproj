@@ -51,27 +51,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <FinalDocFile Remove="bin\Debug\netstandard2.0\ADHelpers.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="bin\Debug\netstandard2.0\ADHelpers.deps.json" />
-    <None Include="bin\Debug\netstandard2.0\ADHelpers.dll" />
-    <None Include="bin\Debug\netstandard2.0\AdHelpers.psd1" />
-    <None Include="bin\Debug\netstandard2.0\ADHelpers.xml" />
-    <None Include="bin\Debug\netstandard2.0\System.Buffers.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.DirectoryServices.AccountManagement.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.DirectoryServices.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.IO.FileSystem.AccessControl.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.Memory.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.Numerics.Vectors.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.Security.AccessControl.dll" />
-    <None Include="bin\Debug\netstandard2.0\System.Security.Principal.Windows.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Folder Include="bin\Debug\netstandard2.0\" />
     <Folder Include="publish\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="CreateManifest.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
