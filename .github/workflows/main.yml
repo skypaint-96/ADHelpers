@@ -8,6 +8,7 @@ jobs:
     - name: build release
       run: |
         write-host (pwd);
-        git clone https://github.com/skypaint-96/ADHelpers.git
-        write-host (ls -recurse);
+        git clone https://github.com/skypaint-96/ADHelpers.git;
+        cd adhelpers;
+        dotnet build -c release
     
