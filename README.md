@@ -1,4 +1,5 @@
 # ADHelpers
+[![.github/workflows/main.yml](https://github.com/skypaint-96/ADHelpers/actions/workflows/main.yml/badge.svg)](https://github.com/skypaint-96/ADHelpers/actions/workflows/main.yml)
 
 A little side project to create tools that I find usefull day to day while working on the service desk.
 
