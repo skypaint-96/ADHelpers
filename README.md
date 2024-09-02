@@ -21,6 +21,11 @@ As certificates to be able to publish to the powershell gallery are expensive, y
 3. If it seems to work fine for you then you can copy the `ADHelpers` folder to any directory found in `$env:PSModulePath`
 4. Once in the directory of your choosing you can run `import-module adhelpers`
 
+## Building
+
+As this is built on netstandard2.0 this is pretty simple just build like a normal dll and run the create manifest script once completed:
+`PS C:\> iwr https://github.com/skypaint-96/ADHelpers/archive/refs/heads/master.zip -OutFile 'master.zip'; expand-archive .\master.zip; cd .\master\ADHelpers-master; dotnet build -c Release; cd ./bin/Release/netstandard2.0/; .\createmanifest.ps1`
+
 ## Not working?
 
 Feel free to leave an [issue](https://github.com/skypaint-96/ADHelpers/issues) ticket.
