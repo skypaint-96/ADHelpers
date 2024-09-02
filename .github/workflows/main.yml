@@ -8,5 +8,6 @@ jobs:
     - name: build release
       run: |
         write-host (pwd);
-        write-host (ls);
+        git clone https://github.com/skypaint-96/ADHelpers.git
+        write-host (ls -recurse);
     
