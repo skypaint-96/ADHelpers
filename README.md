@@ -14,6 +14,13 @@ A little side project to create tools that I find usefull day to day while worki
 
 ## Instalation
 
+### Prerequisites
+
+Seemingly requires either dotnet 8 or powershell core to be installed a quick way to get round this if not avalible for you generaly:
+`PS C:\> iwr 'https://dot.net/v1/dotnet-install.ps1' -outfile dotnet-install.ps1; .\dotnet-install.ps1 -installdir ~\appdata\local\microsoft\dotnet; dotnet tool install --global PowerShell`
+
+### Copying module to module folder
+
 As certificates to be able to publish to the powershell gallery are expensive, you will need to install this manualy.
 
 1. You can [download](https://github.com/skypaint-96/ADHelpers/releases/) and extract the release package.
