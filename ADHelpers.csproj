@@ -23,7 +23,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ADCreate.ps1" />
     <None Remove="LICENSE.txt" />
   </ItemGroup>
 
@@ -32,10 +31,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </ApplicationDefinition>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="ADCreate.ps1" />
   </ItemGroup>
 
   <ItemGroup>
