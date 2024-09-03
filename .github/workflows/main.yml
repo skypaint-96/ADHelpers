@@ -13,10 +13,10 @@ jobs:
         dotnet build '.\ADHelpers\ADHelpers.csproj' -c release -v d
     - name: Create Manifest
       run: |
-        import-module '.\adhelpers.dll' -scope local;
+        import-module '.\adhelpers\bin\release\netstandard2.0\adhelpers.dll' -scope local;
         $version = (get-module AdHelpers).version;
         remove-module adhelpers -force;
-        New-ModuleManifest -Path '.\AdHelpers.psd1' `
+        New-ModuleManifest -Path '.\adhelpers\bin\release\netstandard2.0\AdHelpers.psd1' `
             -RootModule 'ADHelpers' `
             -moduleversion $version `
             -Guid '55b99733-8488-493e-a3cd-05cfcea90974' `
