@@ -5,10 +5,16 @@ jobs:
     steps:
     - name: Setup .NET Core SDK 
       uses: actions/setup-dotnet@v4.0.1
-    - name: build release
+    - name: Clone Repo
       run: |
-        write-host (pwd);
         git clone https://github.com/skypaint-96/ADHelpers.git;
-        cd adhelpers;
-        dotnet build -c release
+    - name: Build
+      run: |
+        dotnet .\adhelpers\adhelpers.csproj build -c release
+    - name: Create Manifest
+      run: |
+        start-process -FilePath pwsh -ArgumentList '-f ".\adhelpers\bin\debug\netstandard2.0\createmanifest.ps1" -wd ".\adhelpers\bin\debug\netstandard2.0\"' 
+    - name: Zip
+      run: |
+        compress-archive -path .\adhelpers\ -destinationpath .\adhelpers.zip
     
