@@ -5,10 +5,30 @@ jobs:
     steps:
     - name: Setup .NET Core SDK 
       uses: actions/setup-dotnet@v4.0.1
-    - name: Clone Repo, Build, Create Manifest, Zip
+    - name: Clone Repo
       run: |
         git clone https://github.com/skypaint-96/ADHelpers.git -v
+    - name: Build
+      run: |
         dotnet build '.\ADHelpers\ADHelpers.csproj' -c release -v d
-        start-process -FilePath pwsh -ArgumentList '-f ".\adhelpers\bin\debug\netstandard2.0\createmanifest.ps1" -wd ".\adhelpers\bin\debug\netstandard2.0\"' -Verbose
+    - name: Create Manifest
+      run: |
+        import-module '.\adhelpers.dll' -scope local;
+        $version = (get-module AdHelpers).version;
+        remove-module adhelpers -force;
+        New-ModuleManifest -Path '.\AdHelpers.psd1' `
+            -RootModule 'ADHelpers' `
+            -moduleversion $version `
+            -Guid '55b99733-8488-493e-a3cd-05cfcea90974' `
+            -Author 'Mason Kerr' `
+            -CompanyName 'Pasifico' `
+            -Copyright '(c) 2024 Mason Kerr. All rights reserved.' `
+            -CmdletsToExport '*' `
+            -VariablesToExport '*' `
+            -LicenseUri 'https://github.com/skypaint-96/ADHelpers/blob/master/LICENSE.txt' `
+            -ProjectUri 'https://github.com/skypaint-96/ADHelpers' `
+            -DefaultCommandPrefix 'ADEX'
+    - name: Zip
+      run: |
         compress-archive -path .\adhelpers\bin\release\netstandard2.0\ -destinationpath .\adhelpers.zip -Verbose
     
