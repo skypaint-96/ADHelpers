@@ -12,15 +12,17 @@ jobs:
     - name: Build
       run: |
         dotnet build '.\ADHelpers\ADHelpers.csproj' -c release -v d
+        mv .\adhelpers .\src;
+        mv '.\src\bin\release\netstandard2.0\' .\adhelpers
     - name: Get Version
       run: |
-        import-module '.\adhelpers\bin\release\netstandard2.0\adhelpers.dll' -scope local;
+        import-module '.\adhelpers\adhelpers.dll' -scope local;
         $version = (get-module AdHelpers).version;
         "outVersion=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         remove-module adhelpers -force;
     - name: Create Manifest
       run: |
-        New-ModuleManifest -Path '.\adhelpers\bin\release\netstandard2.0\AdHelpers.psd1' `
+        New-ModuleManifest -Path '.\adhelpers\AdHelpers.psd1' `
             -RootModule 'ADHelpers' `
             -moduleversion $env:outVersion `
             -Guid '55b99733-8488-493e-a3cd-05cfcea90974' `
@@ -34,24 +36,27 @@ jobs:
             -DefaultCommandPrefix 'ADEX'
     - name: Zip
       run: |
-        compress-archive -path .\adhelpers\bin\release\netstandard2.0\ -destinationpath ".\adhelpers-v$env:outVersion.zip" -Verbose
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ("v" + $outVersion)
-        release_name: ("ADHelpers-v" + $outVersion)
-        draft: true
-        prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: (".\adhelpers-v" + $outVersion + ".zip")
-        asset_name: ("adhelpers-v" + $outVersion + ".zip")
-        asset_content_type: application/zip
+        compress-archive -path .\adhelpers\ -destinationpath ".\adhelpers-v$env:outVersion.zip" -Verbose
+    - name: out
+      run: |
+        ls | %{resolve-path $_}
+#    - name: Create Release
+#      id: create_release
+#      uses: actions/create-release@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      with:
+#        tag_name: ("v" + $outVersion)
+#        release_name: ("ADHelpers-v" + $outVersion)
+#        draft: true
+#        prerelease: false
+#    - name: Upload Release Asset
+#      id: upload-release-asset 
+#      uses: actions/upload-release-asset@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      with:
+ #       upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+ #       asset_path: (".\adhelpers-v" + $outVersion + ".zip")
+ #       asset_name: ("adhelpers-v" + $outVersion + ".zip")
+ #       asset_content_type: application/zip
