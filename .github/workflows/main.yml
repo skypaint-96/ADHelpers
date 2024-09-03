@@ -1,8 +1,5 @@
 on: workflow_dispatch
 
-env:
-  Version: 0
-
 jobs:
   create_package:
     runs-on: windows-latest
