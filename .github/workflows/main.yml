@@ -8,7 +8,7 @@ jobs:
     - name: Clone Repo, Build, Create Manifest, Zip
       run: |
         git clone https://github.com/skypaint-96/ADHelpers.git -v
-        dotnet .\adhelpers\adhelpers.csproj build -c release -v d
+        dotnet build '.\ADHelpers\ADHelpers.csproj' -c release -v d
         start-process -FilePath pwsh -ArgumentList '-f ".\adhelpers\bin\debug\netstandard2.0\createmanifest.ps1" -wd ".\adhelpers\bin\debug\netstandard2.0\"' -Verbose
-        compress-archive -path .\adhelpers\ -destinationpath .\adhelpers.zip -Verbose
+        compress-archive -path .\adhelpers\bin\release\netstandard2.0\ -destinationpath .\adhelpers.zip -Verbose
     
