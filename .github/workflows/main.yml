@@ -15,10 +15,13 @@ jobs:
         mv .\adhelpers .\src;
         mv '.\src\bin\release\netstandard2.0\' .\adhelpers
     - name: Get Version
+      id: version
       run: |
         import-module '.\adhelpers\adhelpers.dll' -scope local;
         $version = (get-module AdHelpers).version;
-        "outVersion=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "outVersion=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
+        "vVersion=v$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
+        "nVersion=ADHepers-v$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
         remove-module adhelpers -force;
     - name: Create Manifest
       run: |
@@ -46,8 +49,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{outVersion}}
-        release_name: ADHelpers-v${{outVersion}}
+        tag_name: ${{steps.version.vVersion}}
+        release_name: ${{steps.version.nVersion}}
         draft: true
         prerelease: false
 #    - name: Upload Release Asset
