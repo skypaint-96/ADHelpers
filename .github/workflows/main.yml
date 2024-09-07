@@ -40,16 +40,16 @@ jobs:
     - name: out
       run: |
         ls | %{resolve-path $_}
-#    - name: Create Release
-#      id: create_release
-#      uses: actions/create-release@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        tag_name: ("v" + $outVersion)
-#        release_name: ("ADHelpers-v" + $outVersion)
-#        draft: true
-#        prerelease: false
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ("v" + $outVersion)
+        release_name: ("ADHelpers-v" + $outVersion)
+        draft: true
+        prerelease: false
 #    - name: Upload Release Asset
 #      id: upload-release-asset 
 #      uses: actions/upload-release-asset@v1
