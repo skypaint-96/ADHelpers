@@ -46,8 +46,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ("v" + $outVersion)
-        release_name: ("ADHelpers-v" + $outVersion)
+        tag_name: ${{"v" + outVersion}}
+        release_name: ${{"ADHelpers-v" + outVersion}}
         draft: true
         prerelease: false
 #    - name: Upload Release Asset
