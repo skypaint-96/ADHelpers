@@ -22,8 +22,8 @@ jobs:
         "outVersion=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
         "vVersion=v$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
         "nVersion=ADHepers-v$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
-        ('asset_path=.\adhepers-v' + $version + '.zip') | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
-        ('asset_name=ADHepers-v' + $version + '.zip') | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
+        ('asset_path=.\adhelpers-v' + $version + '.zip') | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
+        ('asset_name=ADHelpers-v' + $version + '.zip') | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append;
         remove-module adhelpers -force;
     - name: Create Manifest
       run: |
