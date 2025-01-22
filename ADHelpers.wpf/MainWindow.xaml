@@ -1,0 +1,24 @@
+﻿<Window x:Class="ADHelpers.wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ADHelpers.wpf"
+        mc:Ignorable="d"
+        Title="ADHelpers.wpf" Height="513" Width="1033" ResizeMode="NoResize">
+    <Grid Name="MainGrid">
+        <ListBox Margin="10,10,688,368">
+            <ListBoxItem Name="GetLockoutStatusListBoxItem" Content="Get lockout status" Selected="GetLockoutStatusListBoxItem_Selected"/>
+            <ListBoxItem Name="CompareADGroupMembershipsListBoxItem" Content="compare ad groups" Selected="CompareADGroupMembershipsListBoxItem_Selected"/>
+            <ListBoxItem Name="GetUsernamesListBoxItem" Content="get usernames" Selected="GetUsernamesListBoxItem_Selected"/>
+            <ListBoxItem Name="ProcessLeaversListBoxItem" Content="Process leavers" Selected="ProcessLeaversListBoxItem_Selected"/>
+
+        </ListBox>
+        <Grid Name="InputContainer" Margin="10,205,543,10"/>
+        <Label Content="Input" Margin="22,160,973,310"/>
+        <Grid Name="OutputContainer" Height="282" Margin="543,205,10,10"/>
+        <Label Content="output" Margin="758,160,230,305"/>
+        <Grid/>
+
+    </Grid>
+</Window>

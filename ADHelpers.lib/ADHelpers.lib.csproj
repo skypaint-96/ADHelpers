@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>1.$([System.DateTime]::Now.ToString(MMdd)).$([System.DateTime]::Now.ToString(HHmm))</Version>
+    <Authors>Mason Kerr</Authors>
+    <PackageProjectUrl>https://github.com/skypaint-96/ADHelpers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/skypaint-96/ADHelpers.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.DirectoryServices" Version="9.0.1" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

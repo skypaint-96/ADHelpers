@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Version>1.$([System.DateTime]::Now.ToString(MMdd)).$([System.DateTime]::Now.ToString(HHmm))</Version>
+    <Authors>Mason Kerr</Authors>
+    <PackageProjectUrl>https://github.com/skypaint-96/ADHelpers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/skypaint-96/ADHelpers.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\ADHelpers.lib\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ADHelpers.lib\ADHelpers.lib.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -138,5 +138,32 @@
 
             return commonGroups;
         }
+
+        /// <summary>
+        /// tbc
+        /// </summary>
+        /// <param name="users">tbc</param>
+        /// <param name="groupsToRemove">tbc</param>
+        public static void ProcessLeavers(string[] users, string[] groupsToRemove)
+        {
+            UserPrincipal[] userPrincipals = new UserPrincipal[users.Length];
+            for (int i = 0; i < userPrincipals.Length; i++)
+            {
+                userPrincipals[i] = UserPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), IdentityType.SamAccountName, users[i]);
+                userPrincipals[i].Enabled = false;
+                userPrincipals[i].Save();
+            }
+
+            foreach (string group in groupsToRemove)
+            {
+                GroupPrincipal groupPrincipal = GroupPrincipal.FindByIdentity(new PrincipalContext(ContextType.Domain), IdentityType.Name, group);
+                for (int i = 0; userPrincipals.Length > i; i++)
+                {
+                    groupPrincipal.Members.Remove(userPrincipals[i]);
+                }
+
+                groupPrincipal.Save();
+            }
+        }
     }
 }

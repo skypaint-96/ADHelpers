@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>ADHelpers</AssemblyName>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <Authors>Mason Kerr</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/skypaint-96/ADHelpers</PackageProjectUrl>
@@ -41,13 +41,15 @@
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.1">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
-    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="bin\Debug\netstandard2.0\" />
     <Folder Include="publish\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ADHelpers.lib\ADHelpers.lib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
