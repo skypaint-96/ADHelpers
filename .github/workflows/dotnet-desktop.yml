@@ -60,4 +60,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: adhelpers.wpf
-        path: adhelpers.wpf\AppPackages
+        path: .\ADHelpers\adhelpers.wpf\bin\release\netstandard2.0\
